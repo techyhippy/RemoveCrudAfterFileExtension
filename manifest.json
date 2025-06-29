@@ -1,0 +1,33 @@
+{
+    "main": "remove_crud.py",
+    "name": "RemoveCrud",
+    "homepage": "https://github.com/techyhippy/RemoveCrudAfterFileExtension",
+    "kind": "POST-PROCESSING",
+    "displayName": "Remove Crud After File Extension",
+    "version": "1.0.0",
+    "nzbgetMinVersion": "21.0",
+    "author": "techyhippy",
+    "license": "MIT",
+    "about": "Removes extra characters after file extensions for supported media files",
+    "description": "This extension cleans up filenames by removing extra characters after file extensions for supported media files. It helps maintain clean and consistent filenames in your download directory.",
+    "options": [
+        {
+            "name": "Enabled",
+            "displayName": "Enabled",
+            "value": "Yes",
+            "description": ["Enable/disable the extension"],
+            "select": ["Yes", "No"]
+        },
+        {
+            "name": "LogLevel",
+            "displayName": "Log Level",
+            "value": "INFO",
+            "description": ["Set the logging level"],
+            "select": ["DEBUG", "INFO", "WARNING", "ERROR"]
+        }
+    ],
+    "requirements": [
+        "This script requires Python3.7+ to be installed on your system.",
+        "This script requires the following Python packages: logging"
+    ]
+}
