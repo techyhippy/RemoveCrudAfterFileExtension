@@ -1,7 +1,7 @@
 {
     "main": "remove_crud.py",
     "name": "RemoveCrud",
-    "homepage": "https://github.com/techyhippy/RemoveCrudAfterFileExtension.git",
+    "homepage": "https://github.com/techyhippy/NZBGet-RemoveCrudAfterFileExtension.git",
     "kind": "POST-PROCESSING",
     "displayName": "Remove Crud After File Extension",
     "version": "1.0.0",

@@ -1,6 +1,6 @@
 # Remove Crud After File Extension
 
-This NZBGet post-processing script removes extra characters after file extensions for supported media files.
+This is a NZBGet post-processing script removes extra characters after file extensions for supported media files.
 
 ## Supported File Types
 
@@ -13,6 +13,8 @@ This NZBGet post-processing script removes extra characters after file extension
 1. Download the extension from GitHub:
    ```bash
    wget https://github.com/techyhippy/RemoveCrudAfterFileExtension/archive/refs/heads/main.zip
+   https://github.com/techyhippy/NZBGet-RemoveCrudAfterFileExtensionA
+   
    ```
 
 2. Extract the downloaded zip file:
