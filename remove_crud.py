@@ -1,7 +1,34 @@
+#!/lsiopy/bin/python3
+
+###########################################
+### NZBGET POST-PROCESSING SCRIPT       ###
+# This is a NZBGet post-processing script 
+# that removes extra characters after file 
+# extensions for supported media files.
+#
+
+### NZBGET POST-PROCESSING SCRIPT       ###
+###########################################
+
 import os
 import sys
 import logging
 from typing import List, Set
+
+# NZBGet environment variables
+NZBPP_DIRECTORY = os.environ.get('NZBPP_DIRECTORY', '')
+NZBPP_NZBNAME = os.environ.get('NZBPP_NZBNAME', '')
+NZBPP_PARTSIZE = os.environ.get('NZBPP_PARTSIZE', '0')
+NZBPP_STATUS = os.environ.get('NZBPP_STATUS', '')
+NZBPP_CATEGORY = os.environ.get('NZBPP_CATEGORY', '')
+NZBPP_PARSTATUS = os.environ.get('NZBPP_PARSTATUS', '')
+NZBPP_UNPACKSTATUS = os.environ.get('NZBPP_UNPACKSTATUS', '')
+NZBPP_URL = os.environ.get('NZBPP_URL', '')
+NZBPP_SCRIPTDIR = os.environ.get('NZBPP_SCRIPTDIR', '')
+NZBPP_VERSION = os.environ.get('NZBPP_VERSION', '')
+NZBPP_BRANCH = os.environ.get('NZBPP_BRANCH', '')
+NZBPP_BUILD = os.environ.get('NZBPP_BUILD', '')
+NZBPP_URLS = os.environ.get('NZBPP_URLS', '')
 
 # NZBGet error codes
 NZBGET_OK = 90
@@ -52,7 +79,9 @@ def clean_filename(filename: str) -> str:
         if ext in SUPPORTED_EXTENSIONS:
             # Split by extension and take the first part
             clean_name = base.split(ext)[0] + ext
+            logging.info(f"Cleaned filename: {filename} -> {clean_name}")
             return clean_name
+        logging.info(f"Unsupported extension: {ext}")
         return filename
     except Exception as e:
         logging.error(f"Error cleaning filename {filename}: {e}")
@@ -72,41 +101,78 @@ def process_directory(directory: str) -> int:
 
         for file_path in supported_files:
             try:
-                # Get the parent directory and filename
-                parent_dir = os.path.dirname(file_path)
+                # Get filename and clean it
                 filename = os.path.basename(file_path)
+                logging.info(f"Processing file: {filename}")
                 
-                # Clean the filename
+                # Check if file exists
+                if not os.path.exists(file_path):
+                    logging.error(f"File does not exist: {file_path}")
+                    continue
+
                 clean_name = clean_filename(filename)
                 
                 if clean_name != filename:
-                    new_path = os.path.join(parent_dir, clean_name)
+                    new_path = os.path.join(directory, clean_name)
+                    
+                    # Check if target file already exists
                     if os.path.exists(new_path):
-                        logging.warning(f"File already exists: {new_path}")
+                        logging.warning(f"Target file already exists: {new_path}")
                         continue
                     
                     # Rename the file
-                    os.rename(file_path, new_path)
-                    logging.info(f"Renamed: {filename} -> {clean_name}")
+                    try:
+                        os.rename(file_path, new_path)
+                        logging.info(f"Renamed: {filename} -> {clean_name}")
+                    except Exception as e:
+                        logging.error(f"Error renaming file {file_path} to {new_path}: {e}")
+                else:
+                    logging.info(f"No changes needed for: {filename}")
             except Exception as e:
                 logging.error(f"Error processing file {file_path}: {e}")
-
+                logging.error(f"Full traceback: {traceback.format_exc()}")
+        
         return NZBGET_OK
     except Exception as e:
         logging.error(f"Error processing directory {directory}: {e}")
+        logging.error(f"Full traceback: {traceback.format_exc()}")
+        return NZBGET_ERROR
+
+def main():
+    """Main entry point for NZBGet post-processing script."""
+    try:
+        # Log script start with environment variables
+        logging.info("RemoveCrud extension started")
+        logging.info(f"Environment variables: NZBPO_ENABLED={os.getenv('NZBPO_ENABLED')}, NZBPP_DIRECTORY={os.getenv('NZBPP_DIRECTORY')}")
+        logging.info(f"Script path: {os.path.abspath(__file__)}")
+        logging.info(f"Python version: {sys.version}")
+        
+        # Get directory from NZBGet environment variable
+        directory = os.getenv('NZBPP_DIRECTORY', '')
+        if not directory:
+            logging.error("Directory not provided")
+            return NZBGET_ERROR
+
+        # Log directory being processed
+        logging.info(f"Processing directory: {directory}")
+
+        # Check if enabled
+        enabled = os.getenv('NZBPO_ENABLED', 'Yes').upper()
+        if enabled != 'YES':
+            logging.info("RemoveCrud Extension is disabled")
+            return NZBGET_DISABLED
+
+        # Process the directory
+        exit_code = process_directory(directory)
+        
+        # Log script completion
+        logging.info("RemoveCrud extension completed")
+        return exit_code
+
+    except Exception as e:
+        logging.error(f"Error processing directory: {e}")
+        logging.error(f"Full traceback: {traceback.format_exc()}")
         return NZBGET_ERROR
 
 if __name__ == "__main__":
-    # Check if enabled
-    enabled = os.getenv('NZBPO_ENABLED', 'Yes').upper()
-    if enabled != 'YES':
-        logging.info("Extension is disabled")
-        sys.exit(NZBGET_DISABLED)
-
-    if len(sys.argv) != 2:
-        logging.error("Usage: python remove_crud.py <directory>")
-        sys.exit(NZBGET_ERROR)
-
-    directory = sys.argv[1]
-    exit_code = process_directory(directory)
-    sys.exit(exit_code)
+    sys.exit(main())

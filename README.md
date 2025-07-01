@@ -13,8 +13,6 @@ This is a NZBGet post-processing script that removes extra characters after file
 1. Download the extension from GitHub:
    ```bash
    wget https://github.com/techyhippy/RemoveCrudAfterFileExtension/archive/refs/heads/main.zip
-   https://github.com/techyhippy/RemoveCrudAfterFileExtensionA
-   
    ```
 
 2. Extract the downloaded zip file:
@@ -24,12 +22,12 @@ This is a NZBGet post-processing script that removes extra characters after file
 
 3. Copy the extension to your NZBGet scripts directory:
    ```bash
-   cp -r RemoveCrudAfterFileExtension-main/* /usr/local/share/nzbget/scripts/RemoveCrudAfterFileExtension/
+   cp -r RemoveCrudAfterFileExtension-main/* /config/scripts/RemoveCrudAfterFileExtension/
    ```
 
 4. Make the script executable:
    ```bash
-   chmod +x /usr/local/share/nzbget/scripts/RemoveCrudAfterFileExtension/remove_crud.py
+   chmod +x /config/scripts/RemoveCrudAfterFileExtension/remove_crud.py
    ```
 
 ## Usage
@@ -38,13 +36,16 @@ The script will automatically run as a NZBGet post-processing script. It will pr
 
 ## NZBGet Configuration
 
-Add the following to your NZBGet configuration:
-
-```ini
-[Script]
-ScriptEnable=postdownload
-ScriptPostDownload=/usr/local/share/nzbget/scripts/remove_crud.py
-```
+1. Copy the extension files to `/config/scripts/RemoveCrudAfterFileExtension/`
+2. Make sure the script is executable:
+   ```bash
+   chmod +x /config/scripts/RemoveCrudAfterFileExtension/remove_crud.py
+   ```
+3. Restart NZBGet:
+   ```bash
+   docker restart nzbget
+   ```
+4. The extension should automatically appear in the Extensions section of the web interface
 
 ## Exit Codes
 
